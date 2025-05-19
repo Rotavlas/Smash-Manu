@@ -44,20 +44,458 @@ body {
 
 #menu button {
   margin: 0;
-  padding: 15px 40px;
-  font-size: 1.5em;
+  padding: 22px 60px;
+  font-size: 2em;
   background: #444;
   color: #fff;
   border: none;
-  border-radius: 12px;
+  border-radius: 16px;
   cursor: pointer;
-  transition: background 0.2s, transform 0.2s;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.3s;
   box-shadow: 0 4px 16px 0 rgba(0,0,0,0.25);
   width: 260px;
   text-align: left;
+  min-width: 320px;
+  margin-bottom: 18px;
 }
 #menu button:hover {
   background: #ffe066;
   color: #222;
   transform: translateX(10px) scale(1.05);
+  box-shadow: 0 8px 32px 0 #ffe06688;
+}
+
+/* Fenêtre dynamique sans effet néon */
+.dynamic-screen {
+  background: rgba(34,34,34,0.97);
+  box-shadow: 0 8px 32px 0 rgba(0,0,0,0.45); /* <-- tu peux même réduire l'opacité ou la taille si tu veux encore plus sobre */
+  border-radius: 20px;
+  padding: 36px 54px;
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 420px;
+  z-index: 10;
+  animation: fadeInUp 0.7s cubic-bezier(.23,1.02,.58,.99);
+}
+
+.dynamic-screen h2 {
+  color: #ffe066;
+  text-shadow: 2px 2px 8px #000, 0 0 20px #ffe066;
+  margin-bottom: 18px;
+  font-size: 2em;
+  letter-spacing: 1px;
+}
+
+.dynamic-screen button,
+#characterSelectScreen button {
+  margin-top: 10px;
+  padding: 22px 60px;
+  font-size: 2em;
+  background: #ffe066;
+  color: #222;
+  border-radius: 16px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.18);
+  transition: background 0.2s, color 0.2s, transform 0.2s, box-shadow 0.3s;
+  min-width: 320px;
+  margin-bottom: 18px;
+}
+.dynamic-screen button:hover,
+#characterSelectScreen button:hover {
+  background: #fffbe6;
+  color: #111;
+  transform: scale(1.05);
+  box-shadow: 0 8px 32px 0 #ffe06688;
+}
+
+/* Mode de jeu à gauche */
+#gameModeScreen.dynamic-screen {
+  left: 5%;
+  transform: none;
+  align-items: flex-start;
+  min-width: 380px;
+  max-width: 420px;
+}
+
+/* Sélection de personnage */
+#characterSelectScreen {
+  background: linear-gradient(135deg, #18191a 0%, #232526 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10;
+  animation: fadeInUp 0.7s cubic-bezier(.23,1.02,.58,.99);
+}
+
+#characterSelectScreen .stars-bg {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  filter: blur(1px) brightness(1.2);
+  opacity: 0.7;
+  box-shadow: none;
+}
+
+/* --- Titre flottant pour la sélection de personnage --- */
+.character-select-title {
+  position: absolute;
+  top: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2.6em;
+  color: #ffe066;
+  text-shadow: 0 2px 8px #000;
+  letter-spacing: 2px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* --- Grille de personnages --- */
+.character-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 140px);
+  grid-gap: 36px;
+  margin-top: 120px;
+  justify-content: center;
+  align-items: center;
+  background: none;
+  border-radius: 24px;
+  box-shadow: none;
+  padding: 32px 32px 24px 32px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Halo lumineux discret derrière la grille */
+.character-grid::before {
+  display: none;
+}
+
+/* Séparateur lumineux entre grille et joueurs */
+#characterSelectScreen .character-grid {
+  margin-bottom: 32px;
+  position: relative;
+}
+#characterSelectScreen .separator {
+  width: 340px;
+  height: 4px;
+  border-radius: 2px;
+  background: #444;
+  margin: 0 auto 36px auto;
+  box-shadow: none;
+}
+
+/* --- Personnages avec effet néon et animation --- */
+.character-placeholder {
+  width: 140px;
+  height: 140px;
+  background: #2c2c2c;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.4em;
+  color: #ffe066;
+  box-shadow: 0 4px 16px 0 rgba(0,0,0,0.18);
+  border: 2px solid #ffe066;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.3s, border-color 0.2s;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.character-placeholder:hover {
+  background: #3a3a3a;
+  color: #fffbe6;
+  border-color: #ffe066;
+  box-shadow: 0 8px 24px 0 rgba(0,0,0,0.28);
+}
+.character-placeholder::after {
+  display: none;
+}
+.character-placeholder > div {
+  font-size: 0.85em !important;
+  padding: 2px 8px;
+}
+
+/* --- Joueurs avec effet sobre --- */
+.player-card {
+  width: 200px;
+  height: 200px;
+  background: #232526;
+  border-radius: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 2.2em;
+  color: #ffe066;
+  box-shadow: 0 4px 16px 0 rgba(0,0,0,0.18); /* <-- uniquement une ombre noire douce */
+  border: 2px solid #ffe066;
+  position: relative;
+  z-index: 2;
+}
+
+/* --- Joueurs actifs --- */
+.player-card.active {
+  border: 4px solid #ffe066;
+  box-shadow: 0 0 0 4px #ffe06655;
+  background: #353637;
+  transition: box-shadow 0.2s, border 0.2s, background 0.2s;
+}
+
+/* --- Image des joueurs --- */
+.player-image {
+  width: 80px;
+  height: 80px;
+  margin-top: 18px;
+  margin-bottom: 8px;
+  border-radius: 16px;
+  background: #18191a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Image sélectionnée au-dessus du joueur */
+.player-image-large {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 8px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Croix de déselection */
+.deselect-cross {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-size: 1.1em;
+  color: #ffe066;
+  background: #232526;
+  border-radius: 50%;
+  padding: 1px 6px 1px 6px;
+  cursor: pointer;
+  border: 2px solid #ffe066;
+  transition: background 0.2s, color 0.2s;
+  z-index: 4;
+}
+.deselect-cross:hover {
+  background: #ffe066;
+  color: #232526;
+}
+
+/* Boutons retour inversés */
+.back-invert,
+.dynamic-screen button.back-invert,
+#characterSelectScreen button.back-invert {
+  background: #232526;
+  color: #ffe066;
+  border: 2px solid #ffe066;
+}
+.back-invert:hover,
+.dynamic-screen button.back-invert:hover,
+#characterSelectScreen button.back-invert:hover {
+  background: #ffe066;
+  color: #232526;
+}
+
+/* Reflet subtil sur les cartes joueurs */
+.player-card::after {
+  display: none;
+}
+
+/* --- Joueurs row sans lumière --- */
+.players-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 64px;
+  width: 100%;
+  gap: 80px;
+  background: none;
+  border-radius: 24px;
+  padding: 24px 0 8px 0;
+  box-shadow: none;
+  position: relative;
+  z-index: 1;
+}
+
+/* Bouton retour flottant sur la sélection de personnage */
+#characterSelectScreen button {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  min-width: 180px;
+  padding: 14px 36px;
+  font-size: 1.3em;
+  border-radius: 12px;
+  z-index: 20;
+}
+
+/* Paramètres */
+.settings-option label {
+  font-size: 1.2em;
+  color: #ffe066;
+}
+.settings-option input[type="checkbox"] {
+  transform: scale(1.3);
+  margin-right: 10px;
+}
+.settings-option input[type="range"] {
+  vertical-align: middle;
+  margin-left: 10px;
+}
+
+/* Crédits */
+.credits-list {
+  font-size: 1.2em;
+  margin-bottom: 18px;
+}
+.credits-highlight {
+  color: #ffe066;
+}
+.credits-inspiration {
+  font-style: italic;
+  font-size: 1.1em;
+  margin-bottom: 18px;
+  color: #ffe066;
+}
+.credits-thanks {
+  margin-bottom: 18px;
+  color: #aaa;
+}
+
+/* Player controls */
+.player-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.key-zqsd {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.key-zqsd .key:first-child {
+  margin-bottom: 2px;
+}
+
+.key-arrows {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.key-arrows .arrow-key:first-child {
+  margin-bottom: 2px;
+}
+
+.key-zqsd .key {
+  display: inline-block;
+  background: #222;
+  color: #ffe066;
+  border: 2px solid #ffe066;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 1.2em;
+  width: 32px;
+  height: 32px;
+  line-height: 32px;
+  text-align: center;
+  margin: 2px 4px;
+  box-shadow: 0 2px 8px 0 #ffe06644;
+}
+
+.key-arrows .arrow-key {
+  display: inline-block;
+  background: #222;
+  color: #ffe066;
+  border: 2px solid #ffe066;
+  border-radius: 6px;
+  font-size: 1.4em;
+  width: 32px;
+  height: 32px;
+  line-height: 32px;
+  text-align: center;
+  margin: 2px 4px;
+  box-shadow: 0 2px 8px 0 #ffe06644;
+}
+
+/* Keyframes */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.7) rotate(-10deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+
+/* Player slot */
+.player-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.player-selection {
+  position: absolute;
+  top: -130px; /* <-- valeur augmentée pour réhausser l'image */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  min-height: 40px;
+  min-width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.character-info-card {
+  background: rgba(34,34,34,0.98);
+  border: 2px solid #ffe066;
+  border-radius: 18px;
+  color: #ffe066;
+  font-family: 'Press Start 2P', monospace;
+  padding: 24px 24px 18px 24px;
+  z-index: 10;
+  box-shadow: 0 4px 24px 0 rgba(0,0,0,0.18);
+  min-height: 120px;
+  min-width: 220px;
+  max-width: 360px;
+  pointer-events: none;
 }
